@@ -13,6 +13,7 @@ public class ConstantsNew
     public static string CHARACTERS_PATH = "Characters/";
     public static string BACKGROUND_PATH = "Background/";
     public static string MUSIC_PATH = "Music/";
+    public static string AVATAR_IMAGE1_PATH = "AvatarImage1/";  // 立绘图片路径（独立于对话框）
     public const char BACKGROUND_NAME_DELIMITER = '/';
 
     // 错误信息

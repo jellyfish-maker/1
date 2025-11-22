@@ -23,6 +23,7 @@ public static class ExcelReaderNew
         public string AvatarImageFileName;  // 头像文件名
         public string backgroundImageFileName;  // 背景图片文件名
         public string backgroundMusicFileName;  // 背景音乐文件名
+        public string AvatarImage1;  // 立绘图片文件名（独立于对话框）
 
         // 状态字段
         public bool IsProtagonist;          // 是否为主角
@@ -79,6 +80,8 @@ public static class ExcelReaderNew
                         data.Command = SafeGetString(reader, 6);
                         // 清屏指令（第7列，值为1时触发）
                         data.ClearScreen = SafeGetBool(reader, 7, "1");
+                        // 立绘图片（第8列，独立于对话框）
+                        data.AvatarImage1 = SafeGetString(reader, 8);
 
 
                         excelData.Add(data);
@@ -179,6 +182,8 @@ public static class ExcelReaderNew
                 data.Command = SafeGetString(reader, 6);
                 // ⭐ 新增：读取清屏字段（第7列，值为1时清屏）
                 data.ClearScreen = SafeGetBool(reader, 7, "1");
+                // ⭐ 新增：读取立绘图片字段（第8列，独立于对话框）
+                data.AvatarImage1 = SafeGetString(reader, 8);
 
                 excelData.Add(data);
 

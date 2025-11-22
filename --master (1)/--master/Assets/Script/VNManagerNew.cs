@@ -26,6 +26,7 @@ public class VNManagerNew : MonoBehaviour
     public Image protagonistAvatar;  // 右侧主角头像
     public Image otherAvatar;        // 左侧其他角色头像
     public Image dialogueBox;        // 对话框背景
+    public Image avatarImage1;       // 立绘图片（独立于对话框和文字）
     public AudioSource backgroundMusic; // 背景音乐
     [Header("背景叠加设置")]
     public RectTransform backgroundLayerRoot;
@@ -86,6 +87,7 @@ public class VNManagerNew : MonoBehaviour
             if (speakingContent != null) speakingContent.gameObject.SetActive(false);
             if (protagonistAvatar != null) protagonistAvatar.gameObject.SetActive(false);
             if (otherAvatar != null) otherAvatar.gameObject.SetActive(false);
+            if (avatarImage1 != null) avatarImage1.gameObject.SetActive(false);
             if (backgroundLayerTemplate != null)
             {
                 backgroundLayerTemplate.gameObject.SetActive(false);
@@ -429,6 +431,9 @@ public class VNManagerNew : MonoBehaviour
             UpdateBackgroundMusic(data.backgroundMusicFileName);
         }
 
+        // 显示立绘（AvatarImage1，独立于对话框和文字）
+        DisplayAvatarImage1(data.AvatarImage1);
+
         // 启动打字机效果
         typeWriterEffect.StartTyping(displayText);
     }
@@ -587,6 +592,42 @@ public class VNManagerNew : MonoBehaviour
     }
 
     /// <summary>
+    /// 显示立绘（AvatarImage1，独立于对话框和文字）
+    /// </summary>
+    private void DisplayAvatarImage1(string imageFileName)
+    {
+        if (avatarImage1 == null)
+        {
+            return;
+        }
+
+        // 如果文件名为空，隐藏立绘
+        if (string.IsNullOrEmpty(imageFileName))
+        {
+            avatarImage1.gameObject.SetActive(false);
+            avatarImage1.sprite = null;
+            return;
+        }
+
+        // 加载立绘图片
+        string path = $"{ConstantsNew.AVATAR_IMAGE1_PATH}{imageFileName}";
+        Sprite sprite = Resources.Load<Sprite>(path);
+
+        if (sprite != null)
+        {
+            avatarImage1.sprite = sprite;
+            avatarImage1.gameObject.SetActive(true);
+            Debug.Log($"成功加载立绘（AvatarImage1）: {path}");
+        }
+        else
+        {
+            Debug.LogError($"立绘加载失败（AvatarImage1）！检查路径: {path}");
+            avatarImage1.gameObject.SetActive(false);
+            avatarImage1.sprite = null;
+        }
+    }
+
+    /// <summary>
     /// 更新背景音乐
     /// </summary>
     private void UpdateBackgroundMusic(string musicFileName)
@@ -660,6 +701,12 @@ public class VNManagerNew : MonoBehaviour
         {
             otherAvatar.sprite = null;
             otherAvatar.gameObject.SetActive(false);
+        }
+
+        if (avatarImage1 != null)
+        {
+            avatarImage1.sprite = null;
+            avatarImage1.gameObject.SetActive(false);
         }
 
         if (protagonistName != null)
@@ -785,6 +832,7 @@ public class VNManagerNew : MonoBehaviour
         if (speakingContent != null) speakingContent.gameObject.SetActive(false);
         if (protagonistAvatar != null) protagonistAvatar.gameObject.SetActive(false);
         if (otherAvatar != null) otherAvatar.gameObject.SetActive(false);
+        if (avatarImage1 != null) avatarImage1.gameObject.SetActive(false);
 
         // 显示章节选择面板
         if (BranchManager.Instance != null && BranchManager.Instance.branchSelectionPanel != null)
