@@ -31,6 +31,11 @@ public class BranchManager : MonoBehaviour
         new BranchInfo { key = "branch3", fileName = "branch3.xlsx", displayName = "第三章", unlocked = false },
         new BranchInfo { key = "branch4", fileName = "branch4.xlsx", displayName = "第四章", unlocked = false },
         new BranchInfo { key = "branch5", fileName = "branch5.xlsx", displayName = "第五章", unlocked = false },
+        new BranchInfo { key = "branch6", fileName = "branch6.xlsx", displayName = "第六章", unlocked = false },
+        new BranchInfo { key = "branch7", fileName = "branch7.xlsx", displayName = "第七章", unlocked = false },
+        new BranchInfo { key = "branch8", fileName = "branch8.xlsx", displayName = "第八章", unlocked = false },
+        new BranchInfo { key = "branch9", fileName = "branch9.xlsx", displayName = "第九章", unlocked = false },
+        new BranchInfo { key = "branch10", fileName = "branch10.xlsx", displayName = "第十章", unlocked = false },
     };
 
     private Dictionary<string, BranchInfo> branchDict = new Dictionary<string, BranchInfo>();

@@ -274,6 +274,9 @@ public class VNManagerNew : MonoBehaviour
             data.content = "";
         }
 
+        // -------- 显示立绘（AvatarImage1，独立于对话框和文字，优先处理） --------
+        DisplayAvatarImage1(data.AvatarImage1);
+
         // -------- Command 处理 --------
         // 注意：这里使用的是上面声明的 data 变量，而不是不存在的 line，也不是 storyData（后者是 List）
         // 请确保 ExcelReaderNew.ExcelData 中命令字段确实叫 "Command"（大小写敏感）
@@ -290,6 +293,8 @@ public class VNManagerNew : MonoBehaviour
         if (data.ClearScreen)
         {
             ClearScreenUI();
+            // 清屏后重新显示AvatarImage1（如果存在）
+            DisplayAvatarImage1(data.AvatarImage1);
             return;
         }
 
@@ -318,6 +323,8 @@ public class VNManagerNew : MonoBehaviour
             {
                 SetupBackgroundSequence(data.backgroundImageFileName);
             }
+            // 过渡行也可以显示AvatarImage1
+            DisplayAvatarImage1(data.AvatarImage1);
             return;
         }
 
@@ -430,9 +437,6 @@ public class VNManagerNew : MonoBehaviour
         {
             UpdateBackgroundMusic(data.backgroundMusicFileName);
         }
-
-        // 显示立绘（AvatarImage1，独立于对话框和文字）
-        DisplayAvatarImage1(data.AvatarImage1);
 
         // 启动打字机效果
         typeWriterEffect.StartTyping(displayText);
@@ -598,6 +602,7 @@ public class VNManagerNew : MonoBehaviour
     {
         if (avatarImage1 == null)
         {
+            Debug.LogWarning("⚠️ avatarImage1 组件未绑定！请在Inspector中设置 Avatar Image1 字段。");
             return;
         }
 
@@ -606,22 +611,29 @@ public class VNManagerNew : MonoBehaviour
         {
             avatarImage1.gameObject.SetActive(false);
             avatarImage1.sprite = null;
+            Debug.Log("📝 AvatarImage1 文件名为空，已隐藏立绘");
             return;
         }
 
         // 加载立绘图片
         string path = $"{ConstantsNew.AVATAR_IMAGE1_PATH}{imageFileName}";
+        // 移除可能的文件扩展名
+        path = path.Replace(".png", "").Replace(".jpg", "").Replace(".jpeg", "");
         Sprite sprite = Resources.Load<Sprite>(path);
 
         if (sprite != null)
         {
             avatarImage1.sprite = sprite;
             avatarImage1.gameObject.SetActive(true);
-            Debug.Log($"成功加载立绘（AvatarImage1）: {path}");
+            Debug.Log($"✅ 成功加载立绘（AvatarImage1）: {path}");
         }
         else
         {
-            Debug.LogError($"立绘加载失败（AvatarImage1）！检查路径: {path}");
+            Debug.LogError($"❌ 立绘加载失败（AvatarImage1）！\n" +
+                          $"   - 检查路径: Resources/{path}\n" +
+                          $"   - 检查文件名: {imageFileName}\n" +
+                          $"   - 确保图片在 Resources/AvatarImage1/ 目录下\n" +
+                          $"   - 确保图片已导入Unity（不是文件夹中的原始文件）");
             avatarImage1.gameObject.SetActive(false);
             avatarImage1.sprite = null;
         }
