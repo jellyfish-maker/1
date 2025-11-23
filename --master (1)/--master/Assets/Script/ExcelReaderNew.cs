@@ -24,6 +24,7 @@ public static class ExcelReaderNew
         public string backgroundImageFileName;  // 背景图片文件名
         public string backgroundMusicFileName;  // 背景音乐文件名
         public string AvatarImage1;  // 立绘图片文件名（独立于对话框）
+        public string BranchPanelBackground;  // 分支面板背景图片文件名
 
         // 状态字段
         public bool IsProtagonist;          // 是否为主角
@@ -82,6 +83,8 @@ public static class ExcelReaderNew
                         data.ClearScreen = SafeGetBool(reader, 7, "1");
                         // 立绘图片（第8列，独立于对话框）
                         data.AvatarImage1 = SafeGetString(reader, 8);
+                        // 分支面板背景（第9列）
+                        data.BranchPanelBackground = SafeGetString(reader, 9);
 
 
                         excelData.Add(data);
@@ -184,10 +187,12 @@ public static class ExcelReaderNew
                 data.ClearScreen = SafeGetBool(reader, 7, "1");
                 // ⭐ 新增：读取立绘图片字段（第8列，独立于对话框）
                 data.AvatarImage1 = SafeGetString(reader, 8);
+                // ⭐ 新增：读取分支面板背景字段（第9列）
+                data.BranchPanelBackground = SafeGetString(reader, 9);
 
                 excelData.Add(data);
 
-                Debug.Log($"📝 读取行: speaker='{data.speaker}', content='{data.content}', Command='{data.Command}', ClearScreen={data.ClearScreen}");
+                Debug.Log($"📝 读取行: speaker='{data.speaker}', content='{data.content}', Command='{data.Command}', ClearScreen={data.ClearScreen}, AvatarImage1='{data.AvatarImage1}', BranchPanelBackground='{data.BranchPanelBackground}'");
             }
         } while (reader.NextResult());
     }

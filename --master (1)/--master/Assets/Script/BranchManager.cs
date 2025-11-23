@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BranchManager : MonoBehaviour
 {
@@ -31,11 +32,6 @@ public class BranchManager : MonoBehaviour
         new BranchInfo { key = "branch3", fileName = "branch3.xlsx", displayName = "第三章", unlocked = false },
         new BranchInfo { key = "branch4", fileName = "branch4.xlsx", displayName = "第四章", unlocked = false },
         new BranchInfo { key = "branch5", fileName = "branch5.xlsx", displayName = "第五章", unlocked = false },
-        new BranchInfo { key = "branch6", fileName = "branch6.xlsx", displayName = "第六章", unlocked = false },
-        new BranchInfo { key = "branch7", fileName = "branch7.xlsx", displayName = "第七章", unlocked = false },
-        new BranchInfo { key = "branch8", fileName = "branch8.xlsx", displayName = "第八章", unlocked = false },
-        new BranchInfo { key = "branch9", fileName = "branch9.xlsx", displayName = "第九章", unlocked = false },
-        new BranchInfo { key = "branch10", fileName = "branch10.xlsx", displayName = "第十章", unlocked = false },
     };
 
     private Dictionary<string, BranchInfo> branchDict = new Dictionary<string, BranchInfo>();
@@ -45,6 +41,8 @@ public class BranchManager : MonoBehaviour
 
     // 重要：在 Inspector 中拖入你的章节选择面板
     public GameObject branchSelectionPanel;
+    // 分支面板背景图片组件（可选，如果面板有背景Image组件）
+    public Image branchPanelBackgroundImage;
 
     private void Awake()
     {
@@ -251,7 +249,59 @@ public class BranchManager : MonoBehaviour
         branchSelectionPanel.SetActive(true);
         Debug.Log("✅ 章节选择面板已显示");
 
+        // 设置分支面板背景（从Excel读取）
+        SetBranchPanelBackground();
+
         RefreshAllButtons();
+    }
+
+    /// <summary>
+    /// 设置分支面板背景图片
+    /// </summary>
+    private void SetBranchPanelBackground()
+    {
+        if (branchPanelBackgroundImage == null)
+        {
+            Debug.LogWarning("⚠️ branchPanelBackgroundImage 未绑定，跳过背景设置");
+            return;
+        }
+
+        // 从VNManager获取当前分支面板背景文件名
+        string backgroundFileName = "";
+        if (VNManagerNew.Instance != null)
+        {
+            backgroundFileName = VNManagerNew.Instance.GetCurrentBranchPanelBackground();
+        }
+
+        // 如果文件名为空，隐藏背景或使用默认背景
+        if (string.IsNullOrEmpty(backgroundFileName))
+        {
+            Debug.Log("📝 分支面板背景文件名为空，保持当前背景或隐藏");
+            // 可以选择隐藏背景或保持原样
+            // branchPanelBackgroundImage.gameObject.SetActive(false);
+            return;
+        }
+
+        // 加载背景图片
+        string path = $"{ConstantsNew.BRANCH_PANEL_BACKGROUND_PATH}{backgroundFileName}";
+        // 移除可能的文件扩展名
+        path = path.Replace(".png", "").Replace(".jpg", "").Replace(".jpeg", "");
+        Sprite sprite = Resources.Load<Sprite>(path);
+
+        if (sprite != null)
+        {
+            branchPanelBackgroundImage.sprite = sprite;
+            branchPanelBackgroundImage.gameObject.SetActive(true);
+            Debug.Log($"✅ 成功加载分支面板背景: {path}");
+        }
+        else
+        {
+            Debug.LogError($"❌ 分支面板背景加载失败！\n" +
+                          $"   - 检查路径: Resources/{path}\n" +
+                          $"   - 检查文件名: {backgroundFileName}\n" +
+                          $"   - 确保图片在 Resources/BranchPanel/ 目录下\n" +
+                          $"   - 确保图片已导入Unity（不是文件夹中的原始文件）");
+        }
     }
 
     /// <summary>

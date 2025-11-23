@@ -52,6 +52,7 @@ public class VNManagerNew : MonoBehaviour
     private string lastDisplayedCharacter = "";
     private bool lastAvatarDisplayed = false;
     private bool lastCharacterIsProtagonist = false;
+    private string currentBranchPanelBackground = "";  // 当前分支面板背景
 
     // 事件
     public UnityEvent onStoryEnd;
@@ -272,6 +273,16 @@ public class VNManagerNew : MonoBehaviour
         {
             Debug.LogWarning($"⚠️ 第 {currentLine} 行的 content 为 null，设置为空字符串");
             data.content = "";
+        }
+
+        // 调试：打印AvatarImage1的值
+        Debug.Log($"🔍 第 {currentLine} 行的 AvatarImage1 值: '{data.AvatarImage1}' (是否为null: {data.AvatarImage1 == null}, 是否为空: {string.IsNullOrEmpty(data.AvatarImage1)})");
+
+        // 保存分支面板背景（如果当前行有值）
+        if (!string.IsNullOrEmpty(data.BranchPanelBackground))
+        {
+            currentBranchPanelBackground = data.BranchPanelBackground;
+            Debug.Log($"📋 保存分支面板背景: {currentBranchPanelBackground}");
         }
 
         // -------- 显示立绘（AvatarImage1，独立于对话框和文字，优先处理） --------
@@ -764,6 +775,14 @@ public class VNManagerNew : MonoBehaviour
     {
         return storyData;
     }
+
+    /// <summary>
+    /// 获取当前分支面板背景文件名
+    /// </summary>
+    public string GetCurrentBranchPanelBackground()
+    {
+        return currentBranchPanelBackground;
+    }
     /// <summary>
     /// 解析 Excel 中的 Command 字段
     /// 格式示例：
@@ -790,6 +809,13 @@ public class VNManagerNew : MonoBehaviour
             if (cmd.Equals("EndBranch", StringComparison.OrdinalIgnoreCase))
             {
                 Debug.Log("【VNManager】执行 EndBranch");
+                // 在结束分支前，应用当前行的分支面板背景
+                var currentData = storyData[currentLine];
+                if (!string.IsNullOrEmpty(currentData.BranchPanelBackground))
+                {
+                    currentBranchPanelBackground = currentData.BranchPanelBackground;
+                    Debug.Log($"📋 EndBranch: 设置分支面板背景为: {currentBranchPanelBackground}");
+                }
                 if (BranchManager.Instance != null)
                 {
                     BranchManager.Instance.CompleteCurrentBranch();
